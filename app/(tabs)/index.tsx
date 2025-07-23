@@ -1,5 +1,5 @@
-import HomeScreen from '../HomeScreen';
+import HomeScreen from '../HomeScreen'; // adjust the path as needed
 
-export default function Index() {
+export default function IndexTab() {
   return <HomeScreen />;
 }
