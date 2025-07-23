@@ -10,6 +10,7 @@ import {
   useColorScheme,
   Alert,
 } from 'react-native';
+import { useJournal } from '../context/JournalContext';
 
 export default function HomeScreen() {
   // Track light/dark/system theme
@@ -24,12 +25,24 @@ export default function HomeScreen() {
   const [note, setNote] = useState('');
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
 
+  const { addEntry } = useJournal();
+
   const moods = ['😊', '😐', '😢', '😠', '🤩'];
 
   const handleCheckIn = () => {
-    Alert.alert("Check-In Saved", "Your mood has been logged 🎉");
-    // Add save logic here later
-  };
+  if (!selectedMood && !note.trim()) {
+    Alert.alert("No entry", "Please select a mood or enter a note.");
+    return;
+  }
+  addEntry({
+    mood: selectedMood,
+    note,
+    timestamp: new Date().toISOString(),
+  });
+  setNote('');
+  setSelectedMood(null);
+  Alert.alert("Check-In Saved", "Your mood has been logged 🎉");
+};
 
   // Dynamic styles
   const themedCard = [
