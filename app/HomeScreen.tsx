@@ -12,10 +12,17 @@ import {
 } from 'react-native';
 
 export default function HomeScreen() {
+  // Track light/dark/system theme
+  const systemColorScheme = useColorScheme();
+  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
+  const isDarkMode =
+    theme === 'system'
+      ? systemColorScheme === 'dark'
+      : theme === 'dark';
+
+  // State for mood and note
   const [note, setNote] = useState('');
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
-  const colorScheme = useColorScheme();
-  const isDarkMode = colorScheme === 'dark';
 
   const moods = ['😊', '😐', '😢', '😠', '🤩'];
 
@@ -24,12 +31,23 @@ export default function HomeScreen() {
     // Add save logic here later
   };
 
+  // Dynamic styles
+  const themedCard = [
+    styles.card,
+    { backgroundColor: isDarkMode ? '#1e1e1e' : '#fff' }
+  ];
+
+  const themedContainer = [
+    styles.container,
+    { backgroundColor: isDarkMode ? '#121212' : '#fff' }
+  ];
+
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: isDarkMode ? '#121212' : '#fff' }]}
+      style={themedContainer}
       contentContainerStyle={styles.scrollContent}
     >
-      <View style={[styles.card, { backgroundColor: isDarkMode ? '#1e1e1e' : '#fff' }]}>
+      <View style={themedCard}>
         {/* Top Bar */}
         <View style={styles.topBar}>
           <Text style={[styles.appName, { color: isDarkMode ? '#fff' : '#222' }]}>MoodMate</Text>
@@ -40,12 +58,18 @@ export default function HomeScreen() {
             <Text style={{ color: isDarkMode ? '#bbb' : '#444' }}>
               {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </Text>
-            <TouchableOpacity
-              onPress={() => Alert.alert("Theme toggle coming soon!")}
-              style={{ marginTop: 4 }}
-            >
-              <Text style={{ fontSize: 16 }}>{isDarkMode ? '🌙 Dark' : '☀️ Light'}</Text>
-            </TouchableOpacity>
+            {/* Theme Toggle */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 }}>
+              <TouchableOpacity onPress={() => setTheme('light')}>
+                <Text style={{ fontSize: 18, opacity: theme === 'light' ? 1 : 0.5 }}>☀️</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setTheme('dark')}>
+                <Text style={{ fontSize: 18, opacity: theme === 'dark' ? 1 : 0.5 }}>🌙</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setTheme('system')}>
+                <Text style={{ fontSize: 18, opacity: theme === 'system' ? 1 : 0.5 }}>🖥️</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
@@ -72,7 +96,14 @@ export default function HomeScreen() {
         <Text style={styles.label}>Activities: (coming soon)</Text>
 
         <TextInput
-          style={[styles.input, { color: isDarkMode ? '#fff' : '#222' }]}
+          style={[
+            styles.input,
+            {
+              color: isDarkMode ? '#fff' : '#222',
+              backgroundColor: isDarkMode ? '#232323' : '#f7f7f7',
+              borderColor: isDarkMode ? '#444' : '#ccc',
+            }
+          ]}
           placeholder="Add a note..."
           placeholderTextColor={isDarkMode ? "#888" : "#888"}
           value={note}
@@ -168,7 +199,6 @@ const styles = StyleSheet.create({
     color: '#888',
   },
   input: {
-    borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 8,
     padding: 12,
