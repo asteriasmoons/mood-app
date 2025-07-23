@@ -42,7 +42,7 @@ export default function HomeScreen() {
   setNote('');
   setSelectedMood(null);
   Alert.alert("Check-In Saved", "Your mood has been logged 🎉");
-};
+}
 
   // Dynamic styles
   const themedCard = [
